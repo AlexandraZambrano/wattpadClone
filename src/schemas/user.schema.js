@@ -22,8 +22,10 @@ const userSchema = mongoose.Schema(
         date: {
             type: Date,
             default: Date.now
-        }
-    }
+        },
+    },
+
+    { timestamps: true }
 )
 
 export default userSchema

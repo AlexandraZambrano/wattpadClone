@@ -37,6 +37,8 @@ export const login = async (req, res) => {
     const { uname, email, password } = req.body
     const user = await User.findOne({ email }) || await User.findOne({ uname });
 
+    console.log(user.role)
+
     if(!user) {
         return res.status(400).json({message: "Incorrect Email or username"})
     } else {
@@ -48,7 +50,11 @@ export const login = async (req, res) => {
         
         
     }
-    const token = Jwt.sign({ _id:  user._id, username: user.uname, email: user.email}, process.env.TOKEN_SECRET)
-    res.header("auth-token", token).json(token)
+    const token = Jwt.sign({ _id:  user._id, username: user.uname, email: user.email, role: user.role}, process.env.TOKEN_SECRET)
+    const userRole = user.role
+    await res.header({
+      "auth-token": token,
+      "user-role": userRole
+    }).json( token )
 
 }

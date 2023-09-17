@@ -14,6 +14,7 @@ export const getAllBooks = async(req, res) => {
 export const getBook = async (req, res) => {
     try {
         const id = req.params.id
+        console.log(id)//this one gisves me problm=ems+
         const book = await Book.findById({ _id: id })
         res.json(book)
     } catch (error) {
@@ -23,14 +24,28 @@ export const getBook = async (req, res) => {
 
 //CREATES A BOOK
 export const createBook = async (req, res) => {
-    try {
-      await Book.create(req.body);
-      res.status(200).json({ 
-        message: "Book created succesfully" 
+  const { title, description, genre, cover, chapters } = req.body;
+  const userId = req.user._id; // Get the user ID from the request (replace with your actual method)
+
+  console.log(userId)
+  try {
+    // Create a new book with the postedBy field set to the user's ID
+    const book = new Book({
+      title: title,
+      description: description,
+      genre: genre,
+      cover: cover,
+      postedBy: userId,
+      chapters: chapters
     });
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
+
+    // Save the book
+    await book.save();
+
+    res.status(200).json({ message: 'Book created successfully', book });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
   };
 
 //UPDATES A BOOK
@@ -60,3 +75,20 @@ export const deleteBook = async (req, res) => {
       res.json({ message: error.message })
     }
   }
+
+//GET THE BOOKS YOU HAVE POSTED
+export const getUserBooks = async (req,res)=> {
+  
+  try{
+
+    const userId = req.user._id;
+
+    console.log(userId)// Get the user ID from the request (replace with your actual method)
+    const userBooks = await Book.find({ postedBy: userId });
+
+    res.status(200).json({ Library: userBooks })
+  }  catch(err) {
+        console.log(err)
+    }
+
+}
