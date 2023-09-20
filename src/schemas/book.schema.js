@@ -15,6 +15,7 @@ const bookSchema = mongoose.Schema(
         cover: {type:String, required: true},
         createdAt: {type:Date, default: Date.now},
         chapters: [chapterSchema],
+        likes:[{type:ObjectId,ref:"User"}],
         postedBy:{
             type:ObjectId,
             ref:"User",

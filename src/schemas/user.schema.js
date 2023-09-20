@@ -1,4 +1,7 @@
 import mongoose from "mongoose"
+import followSchema from "./follows.schema.js"
+import Follow from "../Models/follow.model.js"
+const { ObjectId } = mongoose.Schema.Types
 
 const userSchema = mongoose.Schema(
     {
@@ -19,6 +22,7 @@ const userSchema = mongoose.Schema(
             default: "user",
             enum: [ "user", "admin" ]
         },
+        follows: [ { type: ObjectId, ref: Follow } ],
         date: {
             type: Date,
             default: Date.now

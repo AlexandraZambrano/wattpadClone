@@ -78,13 +78,17 @@ export const deleteBook = async (req, res) => {
 
 //GET THE BOOKS YOU HAVE POSTED
 export const getUserBooks = async (req,res)=> {
+
+  console.log(req.user)
   
   try{
+    console.log(req.user)
+    console.log("entra")
+    const userIdToken =  req.user._id;
 
-    const userId = req.user._id;
+    console.log(userIdToken)
 
-    console.log(userId)// Get the user ID from the request (replace with your actual method)
-    const userBooks = await Book.find({ postedBy: userId });
+    const userBooks = await Book.find({ postedBy: userIdToken });
 
     res.status(200).json({ Library: userBooks })
   }  catch(err) {
@@ -92,3 +96,41 @@ export const getUserBooks = async (req,res)=> {
     }
 
 }
+
+//LIKES ON A BOOK
+export const likeBook = async (req, res) => {
+  try {
+    const { id } = req.params; // Get the book ID from the URL parameter
+    const userId = req.user._id;
+    // Get the user ID from the request body
+
+    console.log(userId)
+
+    // Check if the book with the given ID exists
+    const book = await Book.findById(id);
+
+    if (!book) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+
+    // Check if the user has already liked the book
+    if (book.likes.includes(userId)) {
+      return res.status(400).json({ message: "User already liked this book" });
+    }
+
+    // Add the user's ID to the likes array of the book
+    book.likes.push(userId);
+
+    // Save the updated book
+    await book.save();
+
+    return res.status(200).json({ message: "Book liked successfully" });
+  } catch (error) {
+    return res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+//TEST
+ export const test = () => {
+  
+ }
